@@ -1,4 +1,4 @@
-package com.premierLeague.premier_Zone.player;
+package com.premierLeague.premier_Zone.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="player_statistic")
 public class Player {
-    @Id
+     @Id
     @Column(name="player_name" , unique = true)
     private String name;
     @Column(name="nation")
