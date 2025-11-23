@@ -5,11 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name="user_info")
+@Table(name="user_info",
+indexes = {
+        @Index(columnList = "userId"),
+        @Index(columnList = "username"),
+        @Index(columnList = "email")
+})
 public class User {
 
     @Id
@@ -30,5 +37,9 @@ public class User {
 
     private LocalDateTime date;
 
+    @ElementCollection
+    @CollectionTable(name="user_followed_team",joinColumns = @JoinColumn(name = "userId"))
+    @Column(name="team_name")
+    private Set<String>followedTeam = new HashSet<>();
 
 }

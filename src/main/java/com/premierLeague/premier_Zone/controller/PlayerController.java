@@ -11,47 +11,47 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/players")
+@CrossOrigin(origins = "*")
 public class PlayerController {
     @Autowired
     private PlayerService playerService;
 
 
- @GetMapping
- public List<Player> getPlayers(
-         @RequestParam(required = false) String name,
-         @RequestParam(required = false) String team,
-         @RequestParam(required = false) String position,
-         @RequestParam(required = false) String nation
-
+ @GetMapping("/getAllPlayers")
+ public ResponseEntity<?> getPlayers(
+         @RequestParam(defaultValue = "0") int page,
+         @RequestParam(defaultValue = "10") int size,
+         @RequestParam(defaultValue = "gls") String sortBy
  ){
-
-     if (team!=null)return playerService.getPlayersFromTeam(team);
-     else if (name != null) return  playerService.getPlayersByName(name);
-     else if(position != null)return  playerService.getPlayerByPos(position);
-     else if(nation != null) return playerService.getPlayerByNation(nation);
-     else return playerService.getPlayers();
+     return ResponseEntity.ok(playerService.getPlayers(page,size,sortBy));
 
  }
 
-// @PostMapping
-//    public ResponseEntity<Player> addPlayer(@RequestBody Player player){
-//     Player createPlayer = playerService.addPlayer(player);
-//     return new ResponseEntity<>(createPlayer, HttpStatus.CREATED);
-// }
-//    @PutMapping
-//    public ResponseEntity<Player> updatePlayer(@RequestBody Player updatedPlayer) {
-//        Player resultPlayer = playerService.updatePlayer(updatedPlayer);
-//        if (resultPlayer != null) {
-//            return new ResponseEntity<>(resultPlayer, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-    @DeleteMapping("/{playerName}")
-    public ResponseEntity<String> deletePlayer(@PathVariable String playerName) {
-        playerService.deletePlayer(playerName);
-        return new ResponseEntity<>("Player deleted successfully", HttpStatus.OK);
+ @GetMapping("/search")
+ public ResponseEntity<?> searchPlayer(
+         @RequestParam String q,
+         @RequestParam(defaultValue = "0") int page,
+         @RequestParam(defaultValue = "10") int size,
+         @RequestParam(defaultValue = "gls") String sortBy){
+     return ResponseEntity.ok(playerService.searchPlayers(q,page,size,sortBy));
+ }
+
+    @GetMapping("/team/{team}")
+    public ResponseEntity<?> getPlayersByTeam(
+            @PathVariable String team,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "gls") String sortBy){
+        return ResponseEntity.ok(playerService.getPlayersFromTeam(team,page,size,sortBy));
     }
 
+    @GetMapping("/nation/{nation}")
+    public ResponseEntity<?> getPlayersByNation(
+            @PathVariable String nation,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "gls") String sortBy){
+        return ResponseEntity.ok(playerService.getPlayerByNation(nation,page,size,sortBy));
+    }
 
 }

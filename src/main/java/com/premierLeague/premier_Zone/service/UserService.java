@@ -1,6 +1,7 @@
 package com.premierLeague.premier_Zone.service;
 
-import com.premierLeague.premier_Zone.dtos.LogInDto;
+import com.premierLeague.premier_Zone.dtos.APIMessages;
+import com.premierLeague.premier_Zone.dtos.DeleteDto;
 import com.premierLeague.premier_Zone.dtos.UserDto;
 import com.premierLeague.premier_Zone.dtos.UserRegisterDto;
 import com.premierLeague.premier_Zone.entity.User;
@@ -8,16 +9,19 @@ import com.premierLeague.premier_Zone.mapper.UserMapper;
 import com.premierLeague.premier_Zone.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -49,6 +53,7 @@ public class UserService {
         user.setUsername(userRegisterDto.getUsername());
         user.setEmail(userRegisterDto.getEmail());
         user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setDate(LocalDateTime.now());
 
         if(user.getRole()==null || user.getRole().isBlank()) user.setRole("USER");
         User saved = userRepository.save(user);
@@ -58,14 +63,7 @@ public class UserService {
 
     }
 
-//    public UserDto logIn (LogInDto dto){
-//        User user = userRepository.findByUsernameIgnoreCase(dto.getUsername()).orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user or password"));
-//        if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Invalid user or password");
-//
-//        }
-//        return UserMapper.userDto(user);
-//    }
+
     @Transactional(readOnly = true)
     public UserDto getById(String userId){
         User user = userRepository.findById(userId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
@@ -84,13 +82,65 @@ public class UserService {
         return userRepository.findAll(pageable).map(UserMapper :: userDto);
     }
 
+
+    public ResponseEntity<?> followTeam(String teamName){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication==null || !authentication.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not authenticated");
+
+        Optional<User> opt = userRepository.findById(authentication.getName());
+        User user = opt.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+
+
+        if(user.getFollowedTeam().contains(teamName))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Already following this team");
+        user.getFollowedTeam().add(teamName);
+        userRepository.save(user);
+
+    return  ResponseEntity.ok(new APIMessages("Following "+teamName));
+    }
+
+    public ResponseEntity<?> UnfollowTeam(String teamName){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication==null || !authentication.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not authenticated");
+
+        Optional<User> opt = userRepository.findById(authentication.getName());
+        User user = opt.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+        if(!user.getFollowedTeam().contains(teamName))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "User not following this team");
+        user.getFollowedTeam().remove(teamName);
+        userRepository.save(user);
+        return ResponseEntity.ok(new APIMessages("Unfollowing "+teamName));
+    }
     @Transactional
-    public void delete(String userId){
-        if(!userRepository.existsById(userId)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
+    public UserDto updateUser(UserDto userDto){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication==null || !authentication.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not authenticated");
+
+        Optional<User> opt = userRepository.findById(authentication.getName());
+        User user = opt.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+
+            user.setUsername(userDto.getUsername());
+            user.setEmail(userDto.getEmail());
+            userRepository.save(user);
+
+
+        return UserMapper.userDto(user);
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteUser(DeleteDto deleteDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication==null || !authentication.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not authenticated");
+
+        Optional<User> opt = userRepository.findById(authentication.getName());
+        User user = opt.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+        if(!passwordEncoder.matches(deleteDto.getPassword(), user.getPassword())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Password did not match");
+        }else {
+            userRepository.deleteById(user.getUserId());
         }
-        userRepository.deleteById(userId);
-        log.info("Deleted user id {}", userId);
+      return ResponseEntity.ok(new APIMessages("Account deleted successfully"));
     }
 
 }

@@ -11,6 +11,7 @@ public class UserMapper {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setRole(user.getRole());
+        dto.setFollowedTeam(user.getFollowedTeam());
 
         return dto;
 

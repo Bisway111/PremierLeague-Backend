@@ -1,10 +1,17 @@
 package com.premierLeague.premier_Zone.service;
 
+import com.premierLeague.premier_Zone.dtos.PlayerDto;
 import com.premierLeague.premier_Zone.entity.Player;
+import com.premierLeague.premier_Zone.mapper.PlayerMapper;
 import com.premierLeague.premier_Zone.repository.PlayerRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -14,55 +21,26 @@ public class PlayerService {
     private  PlayerRepository playerRepository;
 
 
-    public List<Player> getPlayers(){
-
-        return playerRepository.findAll();
+    @Transactional(readOnly = true)
+    public Page<PlayerDto> getPlayers(int page , int size, String sortBy){
+        Pageable pageable= PageRequest.of(page,size, Sort.by(sortBy).descending());
+        return playerRepository.findAll(pageable).map(PlayerMapper::playerToDto);
+    }
+    @Transactional(readOnly = true)
+   public Page<PlayerDto> searchPlayers(String q, int page,int size, String sortBy){
+        Pageable pageable = PageRequest.of(page,size,Sort.by(sortBy).descending());
+        return playerRepository.search(q,pageable).map(PlayerMapper::playerToDto);
+   }
+    @Transactional(readOnly = true)
+    public Page<PlayerDto> getPlayersFromTeam(String teamName , int page, int size, String sortBy){
+        Pageable pageable = PageRequest.of(page,size,Sort.by(sortBy).descending());
+        return playerRepository.findByTeamContainingIgnoreCase(teamName,pageable).map(PlayerMapper::playerToDto);
     }
 
-    public List<Player> getPlayersFromTeam(String teamName){
-
-        return playerRepository.findByTeam(teamName);
-    }
-
-    public List<Player> getPlayersByName(String name){
-        return playerRepository.findByNameContainingIgnoreCase(name);
-    }
-
-    public List<Player> getPlayerByPos(String position){
-        return playerRepository.findByPosContainingIgnoreCase(position);
-    }
-
-    public List<Player> getPlayerByNation(String nation){
-        return playerRepository.findByNationContainingIgnoreCase(nation);
-    }
-
-
-    //    public List<Player> getPlayerBYTeamAndPosition(String team , String position){
-//        return playerRepository.findAll().stream()
-//                .filter(player -> team.equals(player.getTeam()) && position.equals(player.getPos()))
-//                .collect(Collectors.toList());
-//    }
-//    public Player addPlayer(Player player) {
-//        playerRepository.save(player);
-//        return player;
-//    }
-//    public Player updatePlayer(Player updatedPlayer) {
-//        Optional<Player> existingPlayer = playerRepository.findByName(updatedPlayer.getName());
-//
-//        if (existingPlayer.isPresent()) {
-//            Player playerToUpdate = existingPlayer.get();
-//            playerToUpdate.setName(updatedPlayer.getName());
-//            playerToUpdate.setTeam(updatedPlayer.getTeam());
-//            playerToUpdate.setPos(updatedPlayer.getPos());
-//            playerToUpdate.setNation(updatedPlayer.getNation());
-//            playerRepository.save(playerToUpdate);
-//            return playerToUpdate;
-//        }
-//        return null;
-//    }
-    @Transactional
-    public void deletePlayer(String playerName) {
-        playerRepository.deleteByName(playerName);
+    @Transactional(readOnly = true)
+    public Page<PlayerDto> getPlayerByNation(String nation ,int page, int size, String sortBy){
+        Pageable pageable = PageRequest.of(page,size,Sort.by(sortBy).descending());
+        return playerRepository.findByNationContainingIgnoreCase(nation,pageable).map(PlayerMapper::playerToDto);
     }
 
 }

@@ -1,20 +1,20 @@
 package com.premierLeague.premier_Zone.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @NoArgsConstructor
 //@RequiredArgsConstructor
 @Entity
-@Table(name="player_statistic")
+@Table(name="player_statistic",
+        indexes = {@Index(columnList = "player_name"),
+                @Index(columnList = "nation"),
+                @Index(columnList = "position"),
+                @Index(columnList = "team_name")})
 public class Player {
-     @Id
+    @Id
     @Column(name="player_name" , unique = true)
     private String name;
     @Column(name="nation")
@@ -47,3 +47,4 @@ public class Player {
     private String team;
 
 }
+

@@ -16,9 +16,9 @@ public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long EXPIRATION = 1000 * 60 * 60 * 10;
 
-    public String generateToken(String username){
+    public String generateToken(String userId){
         return Jwts.builder()
-                .subject(username)
+                .subject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
                 .signWith(key)
@@ -36,7 +36,7 @@ public class JwtUtil {
             return false;
         }
     }
-    public String extractUsername(String token){
+    public String extractUserId(String token){
         return Jwts.parser()
                 .verifyWith((SecretKey) key)
                 .build()

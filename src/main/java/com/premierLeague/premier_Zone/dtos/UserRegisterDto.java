@@ -12,6 +12,7 @@ public class UserRegisterDto {
     private String username;
 
     @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Enter a valid email")
     private String email;
 
     @NotBlank(message = "Password cannot be empty")
