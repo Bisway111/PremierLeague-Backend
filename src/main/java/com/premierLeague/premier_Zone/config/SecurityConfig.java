@@ -2,6 +2,8 @@ package com.premierLeague.premier_Zone.config;
 
 import com.premierLeague.premier_Zone.security.CustomUserDetailsService;
 import com.premierLeague.premier_Zone.security.JwtAuthFilter;
+import com.premierLeague.premier_Zone.security.OAuth2AuthenticationSuccessHandler;
+import com.premierLeague.premier_Zone.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,10 @@ public class SecurityConfig {
 
    @Autowired
    private PasswordEncoder passwordEncoder;
+   @Autowired
+   private CustomOAuth2UserService customOAuth2UserService;
+   @Autowired
+   private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
    @Bean
    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
@@ -37,10 +43,15 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth ->auth
-                    .requestMatchers("/auth/login","/auth/register","/error","/players/**").permitAll()
+                    .requestMatchers("/auth/login","/auth/register","/error","/players/**","/oauth2/**","/login/**").permitAll()
                     .anyRequest().authenticated())
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(ex ->{});
+            .oauth2Login(oauth-> oauth
+                    .authorizationEndpoint(a->a.baseUri("/oauth2/authorization"))
+                    .redirectionEndpoint(r->r.baseUri("/login/oauth2/code/*"))
+                    .userInfoEndpoint(info->info.oidcUserService(customOAuth2UserService))
+                    .successHandler(oAuth2AuthenticationSuccessHandler)
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
 

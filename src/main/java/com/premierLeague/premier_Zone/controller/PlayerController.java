@@ -1,13 +1,9 @@
 package com.premierLeague.premier_Zone.controller;
 
-import com.premierLeague.premier_Zone.entity.Player;
 import com.premierLeague.premier_Zone.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/players")
@@ -15,6 +11,7 @@ import java.util.List;
 public class PlayerController {
     @Autowired
     private PlayerService playerService;
+
 
 
  @GetMapping("/getAllPlayers")
@@ -35,6 +32,11 @@ public class PlayerController {
          @RequestParam(defaultValue = "gls") String sortBy){
      return ResponseEntity.ok(playerService.searchPlayers(q,page,size,sortBy));
  }
+
+
+
+
+
 
     @GetMapping("/team/{team}")
     public ResponseEntity<?> getPlayersByTeam(
