@@ -2,6 +2,7 @@ package com.premierLeague.premier_Zone.security;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +17,9 @@ public class JwtUtil {
 
 
     @Value("${jwt.secret}")
-    private String string;
+    private String secret;
     private Key getSigningKey(){
-        byte[] keyBytes = Decoders.BASE64.decode(string);
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -29,7 +30,7 @@ public class JwtUtil {
                 .subject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
-                .signWith(getSigningKey())
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
