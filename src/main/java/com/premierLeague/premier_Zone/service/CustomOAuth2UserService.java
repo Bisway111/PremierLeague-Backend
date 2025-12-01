@@ -27,7 +27,7 @@ public class CustomOAuth2UserService extends OidcUserService {
 
     @Override
     public OidcUser loadUser(OidcUserRequest request)throws OAuth2AuthenticationException{
-        log.info("✅Hello i am OAuth 2");
+
         OidcUser user =super.loadUser(request);
 
         Map<String, Object> attrs = user.getAttributes();
@@ -46,7 +46,6 @@ public class CustomOAuth2UserService extends OidcUserService {
             u.setRole("USER");
             u.setDate(LocalDateTime.now());
             userRepository.save(u);
-            log.info(u.getUserId());
         }
         return user;
     }

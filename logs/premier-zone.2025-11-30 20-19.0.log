@@ -1,0 +1,9 @@
+2025-11-30 20:19:13 [HikariPool-1:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=10m47s366ms).
+2025-11-30 20:19:35 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-30 20:19:35 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-11-30 20:19:35 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 9 ms
+2025-11-30 20:19:35 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /players/search?q=Liverpool
+2025-11-30 20:19:35 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-11-30 20:19:35 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /players/search?q=Liverpool
+2025-11-30 20:19:35 [http-nio-8080-exec-2] INFO  c.p.p.service.PlayerService - Search players | query=Liverpool, page=0, size=10, sortBy=gls
+2025-11-30 20:19:36 [http-nio-8080-exec-2] INFO  c.p.p.service.PlayerService - Search complete| matched=34 players
