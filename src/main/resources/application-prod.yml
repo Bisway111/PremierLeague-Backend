@@ -41,3 +41,13 @@ management:
   endpoint:
     health:
       show-details: never
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.oauth2.client: TRACE
+    org.springframework.security.oauth2.core: TRACE
+    org.springframework.web: DEBUG
