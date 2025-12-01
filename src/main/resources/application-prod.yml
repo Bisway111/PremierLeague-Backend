@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${DATABASE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   security:
@@ -15,7 +15,6 @@ spring:
             scope: openid, profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,7 +25,7 @@ spring:
         format_sql: false
 
   redis:
-    url: ${SPRING_REDIS_URL}
+    url: ${REDIS_URL}
 
 server:
   port: ${PORT:8080}
@@ -39,7 +38,6 @@ management:
     web:
       exposure:
         include: health,info
-
   endpoint:
     health:
       show-details: never
