@@ -25,9 +25,9 @@ spring:
         format_sql: false
 
   redis:
-    host: ${SPRING_REDIS_HOST}
-    port: ${SPRING_REDIS_PORT}
-    password: ${SPRING_REDIS_PASSWORD}
+    host: gondola.proxy.rlwy.net
+    port: 40135
+    password: mZWMjFVUKFlZUMYXNBpoLZROhkivdven
 
 server:
   port: ${PORT:8080}
