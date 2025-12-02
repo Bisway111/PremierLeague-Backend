@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
                 @Index(columnList = "team_name")})
 public class Player {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String player_Id;
     @Column(name="player_name")
     private String name;
     @Column(name="nation")
