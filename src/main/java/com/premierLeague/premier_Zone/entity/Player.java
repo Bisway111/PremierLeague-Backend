@@ -33,7 +33,7 @@ public class Player {
     private Double gls;
     @Column(name="assists")
     private Double ast;
-    @Column(name="penalties_scored ")
+    @Column(name="penalties_scored")
     private Double pk;
     @Column(name="yellow_card")
     private Double ycrd;
