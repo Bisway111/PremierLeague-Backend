@@ -25,7 +25,9 @@ spring:
         format_sql: false
 
   redis:
-    url: ${REDIS_URL}
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+    password: ${SPRING_REDIS_PASSWORD}
 
 server:
   port: ${PORT:8080}
