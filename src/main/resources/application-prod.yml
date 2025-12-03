@@ -25,14 +25,15 @@ spring:
         format_sql: false
 
   redis:
-    host: gondola.proxy.rlwy.net
-    port: 40135
-    username: default
-    password: mZWMjFVUKFlZUMYXNBpoLZROhkivdven
-    ssl: true
+      host: redis.railway.internal
+      port: 6379
+      username: default
+      password: mZWMjFVUKFlZUMYXNBpoLZROhkivdven
+      ssl: false
 
   cache:
-    type: redis
+      type: redis
+
 
 server:
   port: ${PORT:8080}
