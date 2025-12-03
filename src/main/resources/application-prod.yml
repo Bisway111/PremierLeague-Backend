@@ -23,10 +23,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
-
   redis:
-   url: ${SPRING_REDIS_URL}
-
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+    username: ${SPRING_REDIS_USERNAME}
+    password: ${SPRING_REDIS_PASSWORD}
   cache:
       type: redis
 
