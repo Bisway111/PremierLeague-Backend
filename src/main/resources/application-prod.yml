@@ -25,11 +25,14 @@ spring:
         format_sql: false
 
   redis:
-      host: redis.railway.internal
-      port: 6379
-      username: default
-      password: mZWMjFVUKFlZUMYXNBpoLZROhkivdven
-      ssl: false
+    host: redis.railway.internal
+    port: 6379
+    username: default
+    password: mZWMjFVUKFlZUMYXNBpoLZROhkivdven
+
+
+
+
 
   cache:
       type: redis
