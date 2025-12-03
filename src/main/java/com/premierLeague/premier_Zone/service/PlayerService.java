@@ -33,7 +33,7 @@ public class PlayerService {
         return result;
 
     }
-    @Cacheable(value="search",key="#q")
+//    @Cacheable(value="search",key="#q")
     @Transactional(readOnly = true)
    public Page<PlayerDto> searchPlayers(String q, int page,int size, String sortBy){
         log.info("Search players | query={}, page={}, size={}, sortBy={}", q, page, size, sortBy);
@@ -42,7 +42,7 @@ public class PlayerService {
         log.info("Search complete| matched={} players",result.getTotalElements());
         return result;
    }
-   @Cacheable(value ="team", key="#teamName")
+//   @Cacheable(value ="team", key="#teamName")
     @Transactional(readOnly = true)
     public Page<PlayerDto> getPlayersFromTeam(String teamName , int page, int size, String sortBy){
        log.info("Fetching  players from team='{}' |  page={}, size={}, sortBy={}", teamName, page, size, sortBy);
@@ -51,7 +51,7 @@ public class PlayerService {
        log.info("Team fetch complete| team='{}',  players={}", teamName, result.getTotalElements());
         return result;
     }
-    @Cacheable(value ="nation", key="#nation")
+//    @Cacheable(value ="nation", key="#nation")
     @Transactional(readOnly = true)
     public Page<PlayerDto> getPlayerByNation(String nation ,int page, int size, String sortBy){
         log.info("Fetching  players by nation='{}' |  page={}, size={}, sortBy={}", nation, page, size, sortBy);
