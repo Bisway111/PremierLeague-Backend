@@ -25,10 +25,10 @@ spring:
         format_sql: false
 
   redis:
-    host: redis.railway.internal
-    port: 6379
-    username: default
-    password: mZWMjFVUKFlZUMYXNBpoLZROhkivdven
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+    username: ${SPRING_REDIS_USER}
+    password: ${SPRING_REDIS_PASSWORD}
 
   cache:
       type: redis
