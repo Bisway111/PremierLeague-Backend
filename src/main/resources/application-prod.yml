@@ -27,8 +27,11 @@ spring:
   redis:
     host: ${SPRING_REDIS_HOST}
     port: ${SPRING_REDIS_PORT}
+    username: ${SPRING_REDIS_USERNAME}
     password: ${SPRING_REDIS_PASSWORD}
     ssl: false
+  cache:
+    type: redis
 
 server:
   port: ${PORT:8080}
