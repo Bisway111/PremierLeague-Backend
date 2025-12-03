@@ -25,10 +25,7 @@ spring:
         format_sql: false
 
   redis:
-    host: ${SPRING_REDIS_HOST}
-    port: ${SPRING_REDIS_PORT}
-    username: ${SPRING_REDIS_USER}
-    password: ${SPRING_REDIS_PASSWORD}
+   url: ${SPRING_REDIS_URL}
 
   cache:
       type: redis
