@@ -29,6 +29,8 @@ spring:
     username: ${SPRING_REDIS_USER}
     password: ${SPRING_REDIS_PASSWORD}
     ssl: false
+    repositories:
+      enabled: false
   cache:
       type: redis
 
