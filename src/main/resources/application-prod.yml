@@ -30,10 +30,6 @@ spring:
     username: default
     password: mZWMjFVUKFlZUMYXNBpoLZROhkivdven
 
-
-
-
-
   cache:
       type: redis
 
@@ -63,3 +59,4 @@ logging:
     org.springframework.security.oauth2.client: TRACE
     org.springframework.security.oauth2.core: TRACE
     org.springframework.web: DEBUG
+    org.springframework.data.redis: DEBUG
