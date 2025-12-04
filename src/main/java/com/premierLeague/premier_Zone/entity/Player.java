@@ -3,10 +3,11 @@ package com.premierLeague.premier_Zone.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name="player_statistic",
         indexes = {@Index(columnList = "player_name"),
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class Player {
     @Id
     private String player_Id;
+//    @Id
     @Column(name="player_name")
     private String name;
     @Column(name="nation")

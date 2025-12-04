@@ -1,7 +1,6 @@
 package com.premierLeague.premier_Zone.service;
 
 import com.premierLeague.premier_Zone.dtos.PlayerDto;
-import com.premierLeague.premier_Zone.entity.Player;
 import com.premierLeague.premier_Zone.mapper.PlayerMapper;
 import com.premierLeague.premier_Zone.repository.PlayerRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @Slf4j
@@ -33,7 +31,7 @@ public class PlayerService {
         return result;
 
     }
-//    @Cacheable(value="search",key="#q")
+    @Cacheable(value="search",key = "#q + '_' + #page + '_' + #size + '_' + #sortBy")
     @Transactional(readOnly = true)
    public Page<PlayerDto> searchPlayers(String q, int page,int size, String sortBy){
         log.info("Search players | query={}, page={}, size={}, sortBy={}", q, page, size, sortBy);
@@ -42,7 +40,7 @@ public class PlayerService {
         log.info("Search complete| matched={} players",result.getTotalElements());
         return result;
    }
-//   @Cacheable(value ="team", key="#teamName")
+   @Cacheable(value ="team", key = "#teamName + '_' + #page + '_' + #size + '_' + #sortBy")
     @Transactional(readOnly = true)
     public Page<PlayerDto> getPlayersFromTeam(String teamName , int page, int size, String sortBy){
        log.info("Fetching  players from team='{}' |  page={}, size={}, sortBy={}", teamName, page, size, sortBy);
@@ -51,7 +49,7 @@ public class PlayerService {
        log.info("Team fetch complete| team='{}',  players={}", teamName, result.getTotalElements());
         return result;
     }
-//    @Cacheable(value ="nation", key="#nation")
+    @Cacheable(value ="nation", key = "#nation + '_' + #page + '_' + #size + '_' + #sortBy")
     @Transactional(readOnly = true)
     public Page<PlayerDto> getPlayerByNation(String nation ,int page, int size, String sortBy){
         log.info("Fetching  players by nation='{}' |  page={}, size={}, sortBy={}", nation, page, size, sortBy);
@@ -60,5 +58,4 @@ public class PlayerService {
         log.info("Nation fetch complete| nation='{}',  players={}", nation, result.getTotalElements());
         return result;
     }
-
 }

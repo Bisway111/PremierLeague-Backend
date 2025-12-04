@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: premier-Zone
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/biswaysingha3442
+    username: postgres
+    password: admin
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  data:
+    redis:
+      host: redis-14634.c89.us-east-1-3.ec2.cloud.redislabs.com
+      port: 14634
+      password: 9MIqY0Shxpl22q9WcDi3tbsMuH5o7qcC
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1086763954010-ru5rjspq59eoe10nd7b1impreqb3bdok.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security.oauth2: DEBUG
+jwt:
+  secret: 84jfh3kF93hf73KFh3Gf93kfH3kF93kfH3kF93kfH3kF93kfH3kF93kfH3kF93k

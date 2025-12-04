@@ -150,11 +150,14 @@ public class UserService {
             log.warn("User update failed: user not found");
             return new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
         });
+           if( !"USER-BY-GOOGLE".equals(user.getRole())) {
+               user.setUsername(userDto.getUsername());
+               user.setEmail(userDto.getEmail());
+           }else{
+               user.setUsername(userDto.getUsername());
+           }
 
-            user.setUsername(userDto.getUsername());
-            user.setEmail(userDto.getEmail());
-            userRepository.save(user);
-
+        userRepository.save(user);
         log.info("User {} updated successfully", user.getUserId());
         return UserMapper.userDto(user);
     }

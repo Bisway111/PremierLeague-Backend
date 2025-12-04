@@ -43,7 +43,7 @@ public class CustomOAuth2UserService extends OidcUserService {
             u.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
             u.setEmail(email);
             u.setUsername(name);
-            u.setRole("USER");
+            u.setRole("USER-BY-GOOGLE");
             u.setDate(LocalDateTime.now());
             userRepository.save(u);
         }

@@ -2,6 +2,7 @@ package com.premierLeague.premier_Zone.controller;
 
 import com.premierLeague.premier_Zone.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,5 +56,21 @@ public class PlayerController {
             @RequestParam(defaultValue = "gls") String sortBy){
         return ResponseEntity.ok(playerService.getPlayerByNation(nation,page,size,sortBy));
     }
+    @Autowired
+    private RedisConnectionFactory connectionFactory;
+
+    @GetMapping("/redis-info")
+    public String redisInfo() {
+        // Cast to Lettuce implementation
+        var lettuce = (org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory) connectionFactory;
+
+        // Get actual standalone config built by Spring Boot
+        var cfg = lettuce.getStandaloneConfiguration();
+
+        return "Redis Host: " + cfg.getHostName() + ", Port: " + cfg.getPort();
+    }
+
+
+
 
 }
