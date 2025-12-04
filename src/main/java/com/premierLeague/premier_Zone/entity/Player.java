@@ -3,11 +3,9 @@ package com.premierLeague.premier_Zone.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Entity
 @Table(name="player_statistic",
         indexes = {@Index(columnList = "player_name"),
