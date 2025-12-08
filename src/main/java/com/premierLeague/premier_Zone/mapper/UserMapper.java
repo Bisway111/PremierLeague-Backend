@@ -4,7 +4,7 @@ import com.premierLeague.premier_Zone.dtos.UserDto;
 import com.premierLeague.premier_Zone.entity.User;
 
 public class UserMapper {
-    public static UserDto userDto(User user){
+    public static UserDto userToDto(User user){
 
         UserDto dto = new UserDto();
         dto.setUserId(user.getUserId());

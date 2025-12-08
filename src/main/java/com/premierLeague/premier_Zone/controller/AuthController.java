@@ -3,6 +3,9 @@ package com.premierLeague.premier_Zone.controller;
 import com.premierLeague.premier_Zone.dtos.*;
 import com.premierLeague.premier_Zone.security.JwtUtil;
 import com.premierLeague.premier_Zone.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
+@Tag(name="Auth API's", description = "user register, user login, user info update, user delete. OAuth 2 available with google, endpoint-oauth2/authorization/google")
 public class AuthController {
 
     @Autowired
@@ -28,12 +32,16 @@ public class AuthController {
 
 
     @PostMapping("/register")
+    @SecurityRequirements
+    @Operation(summary = "To register a new user, no login required")
     public UserDto register(@Valid  @RequestBody UserRegisterDto dto){
 
         return userService.registration(dto);
     }
 
     @PostMapping("/login")
+    @SecurityRequirements
+    @Operation(summary = "To login a user")
     public LoginResponse login(@Valid @RequestBody LogInDto logInDto){
 
         try{
@@ -50,12 +58,14 @@ public class AuthController {
 
     }
     @PutMapping("/update")
-    public UserDto updateProfile(@RequestBody UserDto userDto){
+    @Operation(summary = "To update user info username and email, and for google login user only username update is available ,  login required")
+    public UserDto updateProfile( @Valid @RequestBody UserUpdateDto userUpdateDto){
 
-        return userService.updateUser(userDto);
+        return userService.updateUser(userUpdateDto);
     }
 
     @DeleteMapping("/delete")
+    @Operation(summary = "To delete user account , login required")
     public ResponseEntity<?> deleteUser( @Valid @RequestBody DeleteDto deleteDto){
       return userService.deleteUser(deleteDto);
     }

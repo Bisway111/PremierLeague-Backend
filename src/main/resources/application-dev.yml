@@ -20,6 +20,17 @@ spring:
       port: 14634
       password: 9MIqY0Shxpl22q9WcDi3tbsMuH5o7qcC
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: singhabis190@gmail.com
+    password: sbxf qcdt bmrk pobv
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   security:
     oauth2:
       client:
@@ -44,3 +55,8 @@ logging:
     org.springframework.security.oauth2: DEBUG
 jwt:
   secret: 84jfh3kF93hf73KFh3Gf93kfH3kF93kfH3kF93kfH3kF93kfH3kF93kfH3kF93k
+
+sendgrid:
+  api:
+    key: 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
+  sender: singhabis190@gmail.com

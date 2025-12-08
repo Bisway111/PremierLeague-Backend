@@ -2,6 +2,7 @@ package com.premierLeague.premier_Zone.service;
 
 import com.premierLeague.premier_Zone.entity.User;
 import com.premierLeague.premier_Zone.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -24,8 +26,11 @@ public class CustomOAuth2UserService extends OidcUserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService EmailService;
 
     @Override
+    @Transactional
     public OidcUser loadUser(OidcUserRequest request)throws OAuth2AuthenticationException{
 
         OidcUser user =super.loadUser(request);
@@ -46,6 +51,11 @@ public class CustomOAuth2UserService extends OidcUserService {
             u.setRole("USER-BY-GOOGLE");
             u.setDate(LocalDateTime.now());
             userRepository.save(u);
+            try {
+                EmailService.sendWelcomemail(u.getEmail(), u.getUsername());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return user;
     }

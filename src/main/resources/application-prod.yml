@@ -58,3 +58,8 @@ logging:
     org.springframework.security.oauth2.core: TRACE
     org.springframework.web: DEBUG
     org.springframework.data.redis: DEBUG
+
+sendgrid:
+  api:
+    key: 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
+  sender: singhabis190@gmail.com

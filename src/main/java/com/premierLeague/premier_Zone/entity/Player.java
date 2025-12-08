@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
                 @Index(columnList = "position"),
                 @Index(columnList = "team_name")})
 public class Player {
-    @Id
-    private String player_Id;
-//    @Id
+    @Id    //comment out for dev
+    private String player_Id;//comment out for dev
+//    @Id// comment out off for dev
     @Column(name="player_name")
     private String name;
     @Column(name="nation")

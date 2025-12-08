@@ -6,7 +6,7 @@ import com.premierLeague.premier_Zone.entity.Player;
 public class PlayerMapper {
     public static PlayerDto playerToDto(Player player){
         PlayerDto dto = new PlayerDto();
-        dto.setPlayer_Id(player.getPlayer_Id());
+        dto.setPlayer_Id(player.getPlayer_Id());//comment out for dev
         dto.setName(player.getName());
         dto.setNation(player.getNation());
         dto.setPos(player.getPos());

@@ -1,13 +1,11 @@
 package com.premierLeague.premier_Zone.service;
 
-import com.premierLeague.premier_Zone.dtos.APIMessages;
-import com.premierLeague.premier_Zone.dtos.DeleteDto;
-import com.premierLeague.premier_Zone.dtos.UserDto;
-import com.premierLeague.premier_Zone.dtos.UserRegisterDto;
+import com.premierLeague.premier_Zone.dtos.*;
 import com.premierLeague.premier_Zone.entity.User;
 import com.premierLeague.premier_Zone.mapper.UserMapper;
 import com.premierLeague.premier_Zone.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -33,6 +32,9 @@ public class UserService {
 
     @Autowired
     private  PasswordEncoder passwordEncoder ;
+
+    @Autowired
+    private EmailService EmailService;
 
     @Transactional
     public UserDto registration(UserRegisterDto userRegisterDto){
@@ -59,18 +61,83 @@ public class UserService {
         if(user.getRole()==null || user.getRole().isBlank()) user.setRole("USER");
         User saved = userRepository.save(user);
         log.info("Successfully registered new user with ID: {}", saved.getUserId());
-
-        return UserMapper.userDto(saved);
-
+        try {
+            EmailService.sendWelcomemail(user.getEmail(), user.getUsername());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return UserMapper.userToDto(saved);
     }
 
+    @Transactional(readOnly = true)
+    public Page<UserDto> getAllUser(int page, int size){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication==null || !authentication.isAuthenticated()) {
+            log.warn("Fetch all user: not authenticated");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not authenticated");
+        }
+
+        String AdminId = authentication.getName();
+        Optional<User> adminOpt = userRepository.findById(AdminId);
+        User adminUser = adminOpt.orElseThrow(()->{
+            log.warn("Fetch all user: Admin not found");
+            return new ResponseStatusException(HttpStatus.NOT_FOUND,"Admin not found");
+        });
+
+        if(!"ADMIN-BY-GOOGLE".equals(adminUser.getRole()) && !"ADMIN".equals(adminUser.getRole())){
+            log.warn("Fetch all user: You are not a Admin");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not Admin");
+        }
+
+        Pageable pageable= PageRequest.of(page,size);
+       Page<UserDto> result =userRepository.findAll(pageable).map(UserMapper::userToDto);
+        log.info("Fetched {} users",result.getTotalElements());
+       return result;
+    }
+    @Transactional
+    public ResponseEntity<?> addAdmin(String email){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication==null || !authentication.isAuthenticated()) {
+            log.warn("Admin creation failed: not authenticated");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not authenticated");
+        }
+
+        String AdminId = authentication.getName();
+        Optional<User> adminOpt = userRepository.findById(AdminId);
+        User adminUser = adminOpt.orElseThrow(()->{
+            log.warn("Admin creation failed: Admin not found");
+            return new ResponseStatusException(HttpStatus.NOT_FOUND,"Admin not found");
+        });
+
+        if(!"ADMIN-BY-GOOGLE".equals(adminUser.getRole()) && !"ADMIN".equals(adminUser.getRole())){
+            log.warn("Admin creation failed: You are not a Admin");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not Admin");
+        }
+
+        Optional<User> opt = userRepository.findByEmailIgnoreCase(email);
+        User user = opt.orElseThrow(()->{
+            log.warn("Admin creation failed: user not found");
+            return new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
+        });
+
+        if("ADMIN-BY-GOOGLE".equals(user.getRole()) || "ADMIN".equals(user.getRole())){
+            return ResponseEntity.ok(new APIMessages(email+" already a Admin"));
+        }else if("USER-BY-GOOGLE".equals(user.getRole())){
+            user.setRole("ADMIN-BY-GOOGLE");
+        }else{
+            user.setRole("ADMIN");
+        }
+        log.info("User {} is now {}",user.getEmail(),user.getRole());
+        userRepository.save(user);
+        return ResponseEntity.ok(new APIMessages(email+" now  Admin"));
+    }
 
     @Transactional(readOnly = true)
     public UserDto getById(String userId){
         log.info("Fetching user by ID: {}", userId);
         User user = userRepository.findById(userId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
         log.info("Fetched user by ID: {}", userId);
-        return UserMapper.userDto(user);
+        return UserMapper.userToDto(user);
     }
 
     @Transactional(readOnly = true)
@@ -79,14 +146,9 @@ public class UserService {
         Optional<User> opt = userRepository.findByUsername(username);
         if(!opt.isEmpty())log.info("Fetching user by username: {}", username);
         else log.warn("User not found by username: {}", username);
-        return opt.map(UserMapper :: userDto).orElse(null);
+        return opt.map(UserMapper ::userToDto).orElse(null);
     }
 
-    @Transactional(readOnly = true)
-    public Page<UserDto>listAll(Pageable pageable){
-        log.info("Listing all users, page={} size={}", pageable.getPageNumber(), pageable.getPageSize());
-        return userRepository.findAll(pageable).map(UserMapper :: userDto);
-    }
 
 
    @Transactional
@@ -137,8 +199,9 @@ public class UserService {
         log.info("User {} unfollowed team '{}'", user.getUserId(), teamName);
         return ResponseEntity.ok(new APIMessages("Unfollowing "+teamName));
     }
+
     @Transactional
-    public UserDto updateUser(UserDto userDto){
+    public UserDto updateUser(UserUpdateDto userUpdateDto){
         log.info("Updating user profile...");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication==null || !authentication.isAuthenticated()) {
@@ -150,16 +213,16 @@ public class UserService {
             log.warn("User update failed: user not found");
             return new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
         });
-           if( !"USER-BY-GOOGLE".equals(user.getRole())) {
-               user.setUsername(userDto.getUsername());
-               user.setEmail(userDto.getEmail());
+           if( !"USER-BY-GOOGLE".equals(user.getRole()) && !"ADMIN-BY-GOOGLE".equals(user.getRole())) {
+               user.setUsername(userUpdateDto.getUsername());
+               user.setEmail(userUpdateDto.getEmail());
            }else{
-               user.setUsername(userDto.getUsername());
+               user.setUsername(userUpdateDto.getUsername());
            }
 
         userRepository.save(user);
         log.info("User {} updated successfully", user.getUserId());
-        return UserMapper.userDto(user);
+        return UserMapper.userToDto(user);
     }
 
     @Transactional
@@ -175,6 +238,11 @@ public class UserService {
         User user = opt.orElseThrow(()->{
             log.warn("Delete failed: user not found");
             return new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");});
+        if("USER-BY-GOOGLE".equals(user.getRole()) || "ADMIN-BY-GOOGLE".equals(user.getRole())){
+            userRepository.deleteById(user.getUserId());
+            log.info("User {} deleted their account", user.getUserId());
+            return ResponseEntity.ok(new APIMessages("Account deleted successfully"));
+        }
         if(!passwordEncoder.matches(deleteDto.getPassword(), user.getPassword())){
             log.warn("Delete failed: incorrect password for user {}", user.getUserId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Password did not match");

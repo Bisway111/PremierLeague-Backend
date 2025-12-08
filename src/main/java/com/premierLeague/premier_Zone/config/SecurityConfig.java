@@ -43,7 +43,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth ->auth
-                    .requestMatchers("/auth/login","/auth/register","/error","/players/**","/oauth2/**","/login/**").permitAll()
+                    .requestMatchers("/auth/login","/auth/register","/error","/players/**","/oauth2/**","/login/**","/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html").permitAll()
+                    .requestMatchers("user/all-user", "user/create-admin").hasAnyRole("ADMIN", "ADMIN-BY-GOOGLE")
                     .anyRequest().authenticated())
             .oauth2Login(oauth-> oauth
                     .authorizationEndpoint(a->a.baseUri("/oauth2/authorization"))

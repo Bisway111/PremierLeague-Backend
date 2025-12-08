@@ -8,7 +8,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class PlayerDto implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String player_Id;
+    private String player_Id; //comment out for dev
     private String name;
     private String nation;
     private String pos;
