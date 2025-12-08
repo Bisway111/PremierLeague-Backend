@@ -22,10 +22,11 @@ jobs:
       - name: Build with Maven
         run: mvn -B package -DskipTests
 
+      - name: Install railway CLI
+        run: curl -fsSL https://railway.app/install.sh | sh
+
+      - name: Login to railway
+        run: railway login --token ${{ secrets.RAILWAY_SECRET_KEY }}
 
       - name: Deploy to Railway
-        uses: railwayapp/actions/deploy@v1
-        with:
-          token: ${{ secrets.RAILWAY_SECRET_KEY }}
-          service: ${{ secrets.RAILWAY_SERVICE_ID }}
-
+        run: railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID }}
