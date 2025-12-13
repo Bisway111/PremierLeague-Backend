@@ -21,7 +21,7 @@ public class OpenApiConfig {
                         .title("Premier League API Document")
                         .description("REST API documentation for the Premier League App Backend. (By - Bisway111)")
                         .version("1.0.0"))
-                .servers(List.of(new Server().url("http://localhost:8080").description("local"), new Server().url("https://premier-league.fun").description("live")))
+                .servers(List.of(new Server().url("http://localhost:8080").description("local"), new Server().url("https://premierleague-backend-production.up.railway.app").description("live")))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components().addSecuritySchemes("bearerAuth", new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)
